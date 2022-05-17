@@ -1,5 +1,5 @@
 import axios from "axios";
-import {BASE_URL} from "../constants";
+import { BASE_URL } from "../constants";
 
 const API_URL = BASE_URL + "/authenticate";
 
@@ -32,7 +32,7 @@ const logout = () => {
     localStorage.removeItem("user");
 }
 
-export const AuthenticationService = {
+export const authenticationService = {
     register,
     login,
     logout

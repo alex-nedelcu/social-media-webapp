@@ -1,20 +1,9 @@
 import axios from "axios";
-import {BASE_URL} from "../constants";
-import {authenticationHeader} from "./authentication-header";
 
 const getPublicContent = () => {
-    return axios.get(`${BASE_URL}/public`);
+    return axios.get(`http://localhost:8080/test`);
 }
 
-const getUserBoard = () => {
-    return axios.get(
-        `${BASE_URL}/user`,
-        {
-            headers: authenticationHeader()
-        });
-}
-
-export const UserService = {
+export const userService = {
     getPublicContent,
-    getUserBoard
 };
