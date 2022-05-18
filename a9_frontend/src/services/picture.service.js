@@ -1,8 +1,10 @@
 import http from '../http-common';
+import { getCurrentUser } from "../utils/utils";
 
 const upload = (file, onUploadProgress) => {
     let formData = new FormData();
     formData.append("file", file);
+    formData.append("accountId", getCurrentUser().id);
 
     return http.post("/pictures/upload", formData, {
         headers: {
