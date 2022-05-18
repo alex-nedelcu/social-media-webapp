@@ -1,6 +1,10 @@
 const Wall = () => {
     return (
-        <div>wall</div>
+        <div>
+            <p>Will include:</p>
+            <p>1. A component that allows the user to upload a picture</p>
+            <p>2. A list containing all the pictures</p>
+        </div>
     )
 }
 
