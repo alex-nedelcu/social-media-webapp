@@ -1,5 +1,8 @@
 import http from '../http-common';
 import { getCurrentUser } from "../utils/utils";
+import { authenticationHeader } from "./authentication-header";
+import { BASE_URL } from "../constants";
+import axios from "axios";
 
 const upload = (file) => {
     let formData = new FormData();
@@ -8,13 +11,21 @@ const upload = (file) => {
 
     return http.post("/pictures/upload", formData, {
         headers: {
-            "Content-Type": "multipart/form-data",
+            ...authenticationHeader(), "Content-Type": "multipart/form-data",
         },
     });
 }
 
 const getPictures = () => {
-    return http.get("/pictures");
+    const user = getCurrentUser();
+    const headers = user != null
+        ? { 'Authorization': `Bearer ${user.token}` }
+        : {}
+
+    return axios.get(`${BASE_URL}/pictures`, {
+            headers
+        }
+    );
 }
 
 export const pictureService = {

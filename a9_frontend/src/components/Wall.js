@@ -1,24 +1,39 @@
-import { useState } from "react";
 import { getCurrentUser } from "../utils/utils";
-import UploadPopup from "./UploadPopup";
+
+import UploadForm from "./UploadForm";
+import { useEffect, useState } from "react";
+import { pictureService } from "../services/picture.service";
+import { Image } from "react-native";
+
 
 const Wall = () => {
-    const [uploadPopupVisible, setUploadPopupVisible] = useState(false);
+    const [pictures, setPictures] = useState([]);
+    const [uploaded, setUploaded] = useState(false);
     const user = getCurrentUser();
+
+    const convertToImageComponents = (pictures) => {
+        return pictures.map(picture => {
+            console.log("Processing picture: " + JSON.stringify({ ...picture, decompressed: "" }));
+            const base64Picture = `data:${picture.type};base64,${picture.decompressed}`;
+            return <Image key={picture.id} style={{ width: 50, height: 50 }} source={{ uri: base64Picture }}/>
+        })
+    }
+
+    useEffect(() => {
+        pictureService.getPictures().then(
+            response => {
+                setPictures(convertToImageComponents(response.data));
+                setUploaded(false);
+            }
+        );
+    }, [uploaded]);
 
     return (
         <>
-            <button onClick={() => setUploadPopupVisible(true)}>Upload</button>
-            {uploadPopupVisible && (
-                <UploadPopup
-                    closePopup={() => setUploadPopupVisible(false)}
-                    user={user}
-                />
-            )}
-            <p>Will include:</p>
-            <p>1. A component that allows the user to upload a picture</p>
-            <p>2. A list containing all the pictures</p>
+            <UploadForm user={user} setUploaded={setUploaded}/>
+            {pictures}
         </>
+
     )
 }
 
