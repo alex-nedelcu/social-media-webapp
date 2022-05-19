@@ -4,6 +4,7 @@ import com.example.models.Account;
 import com.example.models.Picture;
 import com.example.payload.requests.UploadPictureRequest;
 import com.example.payload.responses.MessageResponse;
+import com.example.payload.responses.PictureDto;
 import com.example.repositories.IPictureRepository;
 import com.example.services.IAccountService;
 import com.example.utils.PictureUtility;
@@ -34,13 +35,15 @@ public class PictureController {
                 () -> new RuntimeException("User not found!")
         );
 
-        pictureRepository.save(Picture.builder()
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .picture(PictureUtility.compressPicture(file.getBytes()))
-                .account(account)
-                .score(0)
-                .build());
+        pictureRepository.save(
+                Picture.builder()
+                        .name(file.getOriginalFilename())
+                        .type(file.getContentType())
+                        .picture(PictureUtility.compressPicture(file.getBytes()))
+                        .account(account)
+                        .score(0)
+                        .build()
+        );
 
         return ResponseEntity.ok().body(new MessageResponse(
                 "Picture successfully uploaded: " + file.getOriginalFilename())
@@ -61,14 +64,18 @@ public class PictureController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<byte[]>> getPictures() throws IOException {
-        return ResponseEntity.ok()
-                .body(
-                        pictureRepository.findAll()
-                                .stream()
-                                .map(current -> PictureUtility.decompressPicture(current.getPicture()))
-                                .collect(Collectors.toList())
-                );
+    public List<PictureDto> getPictures() throws IOException {
+        return pictureRepository.findAll()
+                .stream()
+                .map(current -> PictureDto.builder()
+                        .id(current.getId())
+                        .accountId(current.getAccount().getId())
+                        .decompressed(PictureUtility.decompressPicture(current.getPicture()))
+                        .score(current.getScore())
+                        .type(current.getType())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
 }
