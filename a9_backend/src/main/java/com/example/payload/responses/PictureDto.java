@@ -11,6 +11,8 @@ public class PictureDto {
 
     private final Long accountId;
 
+    private final String ownerUsername;
+
     private final byte[] decompressed;
 
     private final int score;

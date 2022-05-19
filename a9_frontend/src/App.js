@@ -12,7 +12,6 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
 import Wall from "./components/Wall";
-import TopPictures from "./components/TopPictures";
 
 const App = () => {
     const { user } = useSelector((state) => state.auth);
@@ -58,11 +57,6 @@ const App = () => {
                                         Wall
                                     </Link>
                                 </li>
-                                <li className="nav-item">
-                                    <Link to={{ pathname: "/top" }} className="nav-link">
-                                        Top Pictures
-                                    </Link>
-                                </li>
                             </div>
                         )}
                     </div>
@@ -104,7 +98,6 @@ const App = () => {
                         <Route path="/register" element={<Register/>}/>
                         <Route path="/profile" element={<Profile/>}/>
                         <Route path="/wall" element={<Wall/>}/>
-                        <Route path="/top" element={<TopPictures/>}/>
                     </Routes>
                 </div>
 

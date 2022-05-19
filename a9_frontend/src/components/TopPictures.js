@@ -1,11 +1,32 @@
-const TopPictures = () => {
+import { useState } from "react";
+
+const TopPictures = ({ pictures }) => {
+    const [howMany, setHowMany] = useState(0);
+
+    const handleFormSubmitted = (event) => {
+        let rankingCount = event.target.firstN.value.trim() !== "" ? event.target.firstN.value : null;
+        if (rankingCount == null) {
+            event.preventDefault();
+            setHowMany(0);
+            return;
+        }
+        setHowMany(rankingCount);
+        console.log(`Displaying first ${rankingCount} pictures ordered by votes`);
+        event.preventDefault();
+    }
+
     return (
-        <div>
-            <p>Will include:</p>
-            <p>1. Input box where the user enters an integer N</p>
-            <p>2. A button 'Search'</p>
-            <p>3. A list containing the first N pictures + their owners</p>
-        </div>
+        <>
+            <form
+                style={{ marginBottom: "75px" }}
+                onSubmit={(event) => handleFormSubmitted(event)}>
+                <input id="firstN" type="number"/>
+                <input type="submit" value="Search"/>
+            </form>
+            <div>
+                {pictures.slice(0, howMany)}
+            </div>
+        </>
     )
 }
 

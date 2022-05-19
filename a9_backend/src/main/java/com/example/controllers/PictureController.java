@@ -74,6 +74,7 @@ public class PictureController {
                         .decompressed(PictureUtility.decompressPicture(current.getPicture()))
                         .score(current.getScore())
                         .type(current.getType())
+                        .ownerUsername(current.getAccount().getUsername())
                         .build()
                 )
                 .collect(Collectors.toList());

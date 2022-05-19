@@ -4,16 +4,19 @@ import UploadForm from "./UploadForm";
 import { useEffect, useState } from "react";
 import { pictureService } from "../services/picture.service";
 import { Image } from "react-native";
+import TopPictures from "./TopPictures";
 
 
 const Wall = () => {
     const [pictures, setPictures] = useState([]);
+    const [rankingPictures, setRankingPictures] = useState([]);
     const [uploaded, setUploaded] = useState(false);
     const user = getCurrentUser();
 
     const handleVoteFormSubmitted = (event) => {
         const pictureId = event.target.id;
         const vote = event.target.voteInput.value;
+        event.target.voteButton.disabled = true;
         console.log(`Picture with id ${pictureId} was voted with ${vote}`);
 
         pictureService.vote(pictureId, vote).then(
@@ -21,6 +24,7 @@ const Wall = () => {
                 pictureService.getPictures().then(
                     response => {
                         setPictures(convertToImageComponents(response.data));
+                        setRankingPictures(convertToRankingPictures(response.data));
                     }
                 );
             }, error => {
@@ -30,6 +34,20 @@ const Wall = () => {
         event.preventDefault();
     }
 
+
+    const convertToRankingPictures = (pictures) => {
+        return pictures
+            .sort((a, b) => b.score - a.score)
+            .map(picture => {
+                const base64Picture = `data:${picture.type};base64,${picture.decompressed}`;
+                return (
+                    <div key={picture.id} style={{ marginBottom: '15px' }}>
+                        <Image key={picture.id} style={{ width: 50, height: 50 }} source={{ uri: base64Picture }}/>
+                        <p>Posted by '{picture.ownerUsername}' (id={picture.id}, score={picture.score})</p>
+                    </div>
+                )
+            })
+    }
 
     const convertToImageComponents = (pictures) => {
         return pictures
@@ -48,7 +66,7 @@ const Wall = () => {
                                 <form id={picture.id} onSubmit={(event) => handleVoteFormSubmitted(event)}>
                                     <label htmlFor="voteInput">{text}</label>
                                     <input type="number" name="voteInput" id="voteInput"/>
-                                    <input type="submit" value="Vote"/>
+                                    <input type="submit" value="Vote" id="voteButton"/>
                                 </form>
                             )
                         }
@@ -61,6 +79,7 @@ const Wall = () => {
         pictureService.getPictures().then(
             response => {
                 setPictures(convertToImageComponents(response.data));
+                setRankingPictures(convertToRankingPictures(response.data));
                 setUploaded(false);
             }
         );
@@ -68,10 +87,22 @@ const Wall = () => {
 
     return (
         <>
-            <div style={{ marginBottom: '30px' }}>
-                <UploadForm user={user} setUploaded={setUploaded}/>
+            <div style={{
+                flexGrow: "1",
+                display: "flex",
+                flexDirection: "row",
+            }}
+            >
+                <div style={{ marginRight: "150px" }}>
+                    <div style={{ marginBottom: "30px" }}>
+                        <UploadForm user={user} setUploaded={setUploaded}/>
+                    </div>
+                    {pictures}
+                </div>
+                <div>
+                    <TopPictures pictures={rankingPictures}/>
+                </div>
             </div>
-            {pictures}
         </>
 
     )
