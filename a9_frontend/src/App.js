@@ -1,5 +1,4 @@
 import './App.css';
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect } from "react";
 import { history } from "./utils/history";
@@ -7,11 +6,12 @@ import { clearMessage } from "./actions/message";
 import { logout } from "./actions/authentication";
 
 import EventBus from "./common/EventBus";
-import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
+import Wall from "./components/Wall";
 
 const App = () => {
     const { user } = useSelector((state) => state.auth);
@@ -19,11 +19,13 @@ const App = () => {
 
     useEffect(() => {
         history.listen((location) => {
+            console.log("Dispatching clearMessage() action");
             dispatch(clearMessage()); // clear message when changing location
         });
     }, [dispatch]);
 
     const logOut = useCallback(() => {
+        console.log("Dispatching logout() action");
         dispatch(logout());
     }, [dispatch]);
 
@@ -38,25 +40,24 @@ const App = () => {
     }, [user, logOut]);
 
     return (
-        <Router history={history}>
+        <BrowserRouter history={history}>
             <div>
                 <nav className="navbar navbar-expand navbar-dark bg-dark">
-                    <Link to={{ pathname: "/" }} className="navbar-brand">
-                        bezKoder
-                    </Link>
                     <div className="navbar-nav mr-auto">
                         <li className="nav-item">
-                            <Link to={{ pathname: "/home" }} className="nav-link">
+                            <Link to={{ pathname: "/" }} className="nav-link">
                                 Home
                             </Link>
                         </li>
 
                         {user && (
-                            <li className="nav-item">
-                                <Link to={{ pathname: "/user" }} className="nav-link">
-                                    User
-                                </Link>
-                            </li>
+                            <div className="navbar-nav ml-auto">
+                                <li className="nav-item">
+                                    <Link to={{ pathname: "/wall" }} className="nav-link">
+                                        Wall
+                                    </Link>
+                                </li>
+                            </div>
                         )}
                     </div>
 
@@ -64,11 +65,11 @@ const App = () => {
                         <div className="navbar-nav ml-auto">
                             <li className="nav-item">
                                 <Link to={{ pathname: "/profile" }} className="nav-link">
-                                    {user.username}
+                                    Profile Details
                                 </Link>
                             </li>
                             <li className="nav-item">
-                                <a href="/logout" className="nav-link" onClick={logOut}>
+                                <a href="/login" className="nav-link" onClick={logOut}>
                                     Log out
                                 </a>
                             </li>
@@ -83,7 +84,7 @@ const App = () => {
 
                             <li className="nav-item">
                                 <Link to={{ pathname: "/register" }} className="nav-link">
-                                    Sign Up
+                                    Register
                                 </Link>
                             </li>
                         </div>
@@ -93,16 +94,15 @@ const App = () => {
                 <div className="container mt-3">
                     <Routes>
                         <Route path="/" element={<Home/>}/>
-                        <Route path="/home" element={<Home/>}/>
                         <Route path="/login" element={<Login/>}/>
                         <Route path="/register" element={<Register/>}/>
                         <Route path="/profile" element={<Profile/>}/>
+                        <Route path="/wall" element={<Wall/>}/>
                     </Routes>
                 </div>
 
-                {/* <AuthenticationVerify logOut={logOut}/> */}
             </div>
-        </Router>
+        </BrowserRouter>
     );
 }
 

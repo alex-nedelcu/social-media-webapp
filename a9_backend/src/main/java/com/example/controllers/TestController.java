@@ -9,7 +9,7 @@ public class TestController {
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test() {
-        return "Connection works!";
+        return "Stable frontend-backend connection";
     }
 
 }

@@ -11,16 +11,14 @@ const Profile = () => {
 
     return (
         <div className="container">
-            <header className="jumbotron">
-                <h3>
-                    <strong>{user.username}</strong> Profile
-                </h3>
-            </header>
             <p>
                 <strong>ID:</strong> {user.id}
             </p>
             <p>
-                <strong>Account type:</strong> {user.role}
+                <strong>Username:</strong> {user.username}
+            </p>
+            <p>
+                <strong>Role:</strong> {user.role}
             </p>
         </div>
     );
