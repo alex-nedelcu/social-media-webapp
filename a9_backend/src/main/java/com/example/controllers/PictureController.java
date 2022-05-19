@@ -5,6 +5,7 @@ import com.example.models.Picture;
 import com.example.payload.requests.UploadPictureRequest;
 import com.example.payload.responses.MessageResponse;
 import com.example.payload.responses.PictureDto;
+import com.example.payload.responses.VoteDto;
 import com.example.repositories.IPictureRepository;
 import com.example.services.IAccountService;
 import com.example.utils.PictureUtility;
@@ -78,4 +79,16 @@ public class PictureController {
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/{id}/vote", method = RequestMethod.POST)
+    public void assignVote(
+            @PathVariable("id") Long id,
+            @RequestBody VoteDto voteDto
+    ) {
+        Picture picture = pictureRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("Picture not found!")
+        );
+
+        picture.setScore(picture.getScore() + voteDto.getVote());
+        pictureRepository.save(picture);
+    }
 }
