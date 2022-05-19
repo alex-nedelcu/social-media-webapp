@@ -28,7 +28,22 @@ const getPictures = () => {
     );
 }
 
+const vote = (pictureId, voteValue) => {
+    const user = getCurrentUser();
+    const headers = user != null
+        ? { 'Authorization': `Bearer ${user.token}`, 'Content-Type': 'application/json' }
+        : {}
+
+    return http.post(`/pictures/${pictureId}/vote`, {
+            vote: voteValue
+        }, {
+            headers
+        }
+    );
+}
+
 export const pictureService = {
     upload,
-    getPictures
+    getPictures,
+    vote
 }
